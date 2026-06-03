@@ -30,13 +30,10 @@ Existem 2 principais formas de criar uma tarefa de persistência, e por isto, se
 
 Para criar a tarefa, o invasor utilizou a interface gráfica do Task Scheduler, o “*taskchd.msc*”:
 
-!image.png
-
-!image.png
-
-!image.png
-
-!image.png
+<img width="691" height="253" alt="image" src="https://github.com/user-attachments/assets/1d2ea33f-fe7a-4904-ac1e-020a63b32fc1" />
+<img width="692" height="287" alt="image" src="https://github.com/user-attachments/assets/7fb25aae-1ac7-4938-ad69-44664e71a62c" />
+<img width="692" height="253" alt="image" src="https://github.com/user-attachments/assets/ea6c0a8a-1c9a-45d0-89d0-6daf1da23613" />
+<img width="684" height="169" alt="image" src="https://github.com/user-attachments/assets/1eb33fd7-0460-4676-bbc9-d0a5c2565f24" />
 
 ### Telemetria Gerada
 
@@ -44,15 +41,14 @@ Para criar a tarefa, o invasor utilizou a interface gráfica do Task Scheduler, 
 
 Iniciar o taskschd.msc gera o evento de ID 1 pelo Sysmon, apontando a criação deste processo. Para confirmar o início deste processo filtrei no Splunk os logs pelos que contêm EventID 1 e a substring “taskschd.msc”:
 
-!image.png
-
-!image.png
+<img width="1343" height="289" alt="image" src="https://github.com/user-attachments/assets/352c5559-89ef-444d-9cd8-0b31078fa55c" />
+<img width="953" height="91" alt="image" src="https://github.com/user-attachments/assets/066d426a-59d6-4041-bf7c-c7c4af333f8b" />
 
 #### Sysmon Event 11:
 
 O segundo evento gerado é a criação de um arquivo sem extensão dentro de “C:\Windows\System32\Tasks”, simbolizando a criação da tarefa:
 
-!image.png
+<img width="832" height="136" alt="image" src="https://github.com/user-attachments/assets/84a5a8fd-24a5-4afb-a44b-a73d821af35f" />
 
 ## Investigação
 
@@ -60,26 +56,26 @@ O segundo evento gerado é a criação de um arquivo sem extensão dentro de “
 
 Uma análise do primeiro log do Sysmon revela o usuário utilizado para executar o Task Scheduler, no campo “User”, que é o usuário “JohnDoe”:
 
-!image.png
+<img width="813" height="151" alt="image" src="https://github.com/user-attachments/assets/e1192453-a690-4fa0-9e46-b039e37e9a47" />
 
 ### Quando criou?
 
 A criação efetiva da tarefa se dá pela criação do arquivo em C:\Windows\System32\Tasks, e o segundo log mostra o timestamp exato da criação em 03/06/2026 às 00:55:29:
 
-!image.png
+<img width="87" height="92" alt="image" src="https://github.com/user-attachments/assets/6a72d963-8490-4996-860c-42f555384c9f" />
 
 ### Qual payload será executado?
 
 Sabendo o caminho exato do arquivo que armazena as informações da tarefa agendada, abri-lo será um forte ponto de partida para analisar o payload. Escolhi o VSCode como editor, pois apesar de não ter extensões o arquivo está em formato XML. 
 A tag <Exec> mostra que uma reverse shell para *192.168.1.55:4444* será iniciada utilizando o *ncat.exe*:
 
-!image.png
+<img width="1085" height="419" alt="image" src="https://github.com/user-attachments/assets/85bf2f0d-db22-4c9c-9979-75df3caa759d" />
 
 ### Quando será executado?
 
 O mesmo arquivo também exibe que a tarefa será disparada em todo logon do usuário JohnDoe:
 
-!image.png
+<img width="662" height="345" alt="image" src="https://github.com/user-attachments/assets/9c5feecf-9d6a-46c5-823c-37cfcc743d2f" />
 
 ## Oportunidades de Detecção
 
@@ -132,3 +128,5 @@ O mesmo arquivo também exibe que a tarefa será disparada em todo logon do usu�
 ## Conclusão
 
 O Sysmon e o Splunk são duas ótimas ferramentas para abstrair, em poucos logs, o evento de criação de uma tarefa agendada. Com eles podemos traçar o momento, payload e frequência de ativação da tarefa, possibilitando ações posteriores de threat hunting e incident response ao ataque.
+
+## Sub-Cenário 2 [Em Breve]
