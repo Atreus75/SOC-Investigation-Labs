@@ -1,2 +1,2 @@
-# SOC_Detection_Playbooks
-All the playbooks i'm writing while studying SOC detection strategies.
+# SOC Investigation Labs
+All the labs i've done studying and praticing SOC analysis and suspicious event investigation.
