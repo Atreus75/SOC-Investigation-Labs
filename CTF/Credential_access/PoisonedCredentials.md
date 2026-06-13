@@ -2,7 +2,9 @@
 https://cyberdefenders.org/blueteam-ctf-challenges/poisonedcredentials/
 
 ## Objetivo
+
 A equipe de segurança detectou um aumento repentino na atividade suspeita da rede. Há preocupações de que ataques de envenenamento de LLMNR (Link-Local Multicast Name Resolution) e NBT-NS (NetBIOS Name Service) possam estar ocorrendo na rede. Esta investigação tem como objetivo analisar os logs de rede e examinar o tráfego de rede capturado.
+
 ----
 ## Investigação
 ### Análise dos Eventos (Timeline)
