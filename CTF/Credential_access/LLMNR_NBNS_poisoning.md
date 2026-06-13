@@ -1,4 +1,4 @@
-# Poisoned Credentials Lab
+# LLMNR/NBNS Poisoning and Credential Theft
 https://cyberdefenders.org/blueteam-ctf-challenges/poisonedcredentials/
 
 ## Objetivo
@@ -8,6 +8,7 @@ A equipe de segurança detectou um aumento repentino na atividade suspeita da re
 ----
 ## Investigação
 ### Análise dos Eventos (Timeline)
+A fonte principal de eventos relacionados ao ataque é um arquivo .pcap, cujo tráfego registrado foi dissecado utilizando Wireshark.<br>
 Todos os eventos datam de 21/10/2023
 #### 20:27
 Um broadcast NBNS e um multicast MDNS foram iniciados por 192.168.232.162 em sua subrede. Ambos requisitando o endereço que responde ao nome "fileshaare". O nome requisitado aparenta conter um erro de digitação, referenciando-se na verdade a "fileshare".<br>  
@@ -29,14 +30,14 @@ A multiplicidade de nomes autoreferenciados pelo host 192.168.232.215 demonstra 
 Uma sessão SMB como usuário "janesmith" na máquina "AccountingPC" é requisitada por 192.168.232.215 a 192.168.232.176.<br>
 <img width="811" height="63" alt="image" src="https://github.com/user-attachments/assets/475d1b7e-d76c-492c-9ec9-45bff60a94fc" /><br>
 <img width="1254" height="314" alt="image" src="https://github.com/user-attachments/assets/6c05ea08-9541-4401-a935-87e29bbda205" /><br>
-A mensagem final de resposta ao grupo de requisições feitas por 192.168.232.215 mostra que a sessão foi criada com sucesso. Os demais pacotes SMB foram então criptografados e o tráfego restante na captura não apresenta informações relevantes sobre o ataque.<br>
+A mensagem final de resposta ao grupo de requisições feitas por 192.168.232.215 mostra que a sessão foi criada com sucesso. Após a autenticação SMB, o restante da comunicação tornou-se inacessível devido ao uso de criptografia SMB, limitando a análise dos pacotes subsequentes.<br>
 <img width="700" height="104" alt="image" src="https://github.com/user-attachments/assets/809b864a-0474-40d7-8a32-49e30e2f33fa" /><br>
 <img width="744" height="61" alt="image" src="https://github.com/user-attachments/assets/3459684e-8e75-4eb3-9dd7-b474ca7a1b6a" /><br>
 
 ### Determinação de Impacto
-O usuário "janesmith" bem como sua máquina "AccountingPC" foram comprometidas pelo invasor.
+O usuário "janesmith" bem como sua máquina "AccountingPC" foram expostas ao invasor e acessadas pelo mesmo.
 ## IOCs Encontrados
-* **IP de origem**: !92.168.232.215
+* **IP de origem**: 192.168.232.215
 * **Username afetado**: janesmith
 * **Máquina afetada**: AccountingPC
 ## ATT&CKs
