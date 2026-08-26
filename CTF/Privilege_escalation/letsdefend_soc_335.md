@@ -67,4 +67,26 @@ O exploit é executado, e uma janela gráfica do Powershell foi iniciada pelo us
 
 O primeiro de seus comandos é justamente checar se o exploit de privilege escalation funcionou corretamente, ao rodar *whoami* para saber o nome do usuário atual:<br>
 <img width="851" height="255" alt="image" src="https://github.com/user-attachments/assets/d2fe1caf-b2ef-44cd-912b-af24ad72353d" /><br>
+A partir daqui, não há mais evidências no endpoint que sugiram a continuidade da atividade suspeita.
 
+### Análise de Logs
+Todos os eventos se passam no dia 22/01/2025.<br><br>
+
+#### 08:35
+Cinco logs foram criados pelo firewall relatando repetidas tentativas de conexão à porta *3389* (**RDP**) do host *Victor*, vindas host de *IP* *185.107.56.141*.<br>
+<img width="902" height="269" alt="image" src="https://github.com/user-attachments/assets/9661cd57-4a60-4360-9c29-04b86f869e0c" /><br>
+Relacionadas às tentativas de login *RDP* bloqueadas pelo firewall, o sistema operacional disparou cinco eventos sobre tentativas de login no sistema, envolvendo os usuários *admin*, *guest* e por último: ***Victor***. O login como usuário *Victor* foi bem sucedido.<br>
+<img width="910" height="263" alt="image" src="https://github.com/user-attachments/assets/58f076a0-7376-492e-9454-84c63764fd5a" /><br>
+<img width="525" height="131" alt="image" src="https://github.com/user-attachments/assets/ae08d967-d43e-46b4-8145-c14f327a6312" />
+<img width="515" height="121" alt="image" src="https://github.com/user-attachments/assets/ca9bdf60-61ff-4e94-bac7-c5283acd5d6a" />
+<img width="442" height="128" alt="image" src="https://github.com/user-attachments/assets/bc7864b7-ccc8-4422-bd29-a3e9b3261693" /><br>
+Uma sequência de tão poucas tentativas de login (5 no total) e a distribuição das tentativas entre 3 usuários diferentes descarta a hipótese de um ataque brute-force. Por outro lado, estas evidências apontam para um ataque de **Password Spraying**: um ataque onde o invasor já possui uma senha para logar no sistema mas ainda não sabe à qual usuário esta senha pertence, precisando então testar contra alguns usuários.
+## Resumo Executivo
+### Determinação de Impacto
+O sistema de *hostname* *Victor* foi **totalmente comprometido** após o invasor tomar controle do usuário *SYSTEM*. Além disto, as credenciais do usuário *Victor* também foram comprometidas, o que pode indicar *credencial exposure* explorado pelo invasor.
+### Indicadores de Compromisso (IOCs)
+* **IP do Invasor**: 185.107.56.141
+* **Exploit da CVE-2024-49138*:
+  * **Hash**: b432dcf4a0f0b601b1d79848467137a5e25cab5a0b7b1224be9d3b6540122db9
+  * **Processo malicioso**: svohost.exe
+  * **PID**: 7640
